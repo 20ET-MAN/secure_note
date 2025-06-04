@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -83,8 +84,16 @@ fun FirstLaunchScreen(onGoToLogin: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(64.dp))
-            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = "SECURE APP",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontSize = 64.sp,
+                    color = MaterialTheme.colorScheme.primary
+                ),
+            )
+            Spacer(modifier = Modifier.height(98.dp))
+            Icon(icon, contentDescription = null, modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(text, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(32.dp))
             Button(onClick = {

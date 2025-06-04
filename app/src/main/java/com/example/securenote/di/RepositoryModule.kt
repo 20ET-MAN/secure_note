@@ -1,7 +1,9 @@
 package com.example.securenote.di
 
-import com.example.securenote.data.repository.AppLaunchRepositoryImpl
-import com.example.securenote.domain.repository.AppLaunchRepository
+import com.example.securenote.data.local.AppSettingDataSource
+import com.example.securenote.data.local.datasource.AppSettingDataSourceImpl
+import com.example.securenote.data.repository.AppSettingsRepositoryImpl
+import com.example.securenote.domain.repository.AppSettingsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +16,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppLaunchRepository(appLaunchRepositoryImpl: AppLaunchRepositoryImpl): AppLaunchRepository
+    abstract fun bindAppLaunchDataSource(appSettingDataSourceImpl: AppSettingDataSourceImpl): AppSettingDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindAppLaunchRepository(appLaunchRepositoryImpl: AppSettingsRepositoryImpl): AppSettingsRepository
 }

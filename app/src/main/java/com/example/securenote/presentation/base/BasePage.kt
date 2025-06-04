@@ -80,9 +80,10 @@ fun <VM : BaseViewModel> BasePage(
             }
             val isShowErrorDialog = error != null && pageStatus == PageStatus.LOADED
             CommonErrorDialog(
+                errorMessage = error,
                 show = isShowErrorDialog,
-                onCancel = { viewModel.clearError() },
-                onSummit = { viewModel.retry() }
+                negativeButtonClick = { viewModel.clearError() },
+                positiveButtonClick = { viewModel.retry() }
             )
         }
     }

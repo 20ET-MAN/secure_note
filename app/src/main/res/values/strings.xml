@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Secure Note</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
+    <string name="something_wrong">Something wrong !!!</string>
+    <string name="biometric_authentication_error">Authentication failed \n ErrorMessage: %s \n ErrorCode: %s</string>
+    <string name="biometric_hardware_unavailable">Hardware unavailable</string>
+    <string name="biometric_feature_unavailable">Feature unavailable</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="biometric_prompt_title">Security authentication</string>
+    <string name="biometric_prompt_desc">Please authenticate to use the application.</string>
+    <string name="login_sc_title">Welcome Back</string>
+    <string name="login_sc_authentication_btn">Authentication</string>
+    <string name="login_sc_biometric_error_title">Notification</string>
+    <string name="login_sc_biometric_error_description">Please set up biometrics or screen lock to use the app.</string>
+    <string name="login_sc_biometric_error_btn">Go to secure setting</string>
+
 </resources>

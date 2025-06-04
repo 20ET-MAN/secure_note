@@ -16,7 +16,6 @@ fun SecureAppNavHost(
     navHostController: NavHostController = rememberNavController(),
     startDestination: String,
 ) {
-    //val appNavigator = remember(navHostController) { SecureAppNavigator(navHostController) }
     NavHost(
         modifier = modifier,
         navController = navHostController,

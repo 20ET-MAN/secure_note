@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.securenote.util.ErrorHandler
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,6 +53,32 @@ abstract class BaseViewModel(protected val errorHandler: ErrorHandler) : ViewMod
             _isLoading.value = false
         }
     }
+
+    protected fun launchSilent(
+        block: suspend CoroutineScope.() -> Unit
+    ): Job {
+        return viewModelScope.launch(exceptionHandler) {
+            block()
+        }
+    }
+
+    protected fun launchWithCustomHandler(
+        onError: ((Throwable) -> Unit)? = null,
+        block: suspend CoroutineScope.() -> Unit
+    ): Job {
+        val customHandler = CoroutineExceptionHandler { _, throwable ->
+            if (onError != null) {
+                onError(throwable)
+            } else {
+                handleException(throwable)
+            }
+        }
+
+        return viewModelScope.launch(customHandler) {
+            block()
+        }
+    }
+
 
     open fun retry() {
         lastRetryBlock?.let { block ->

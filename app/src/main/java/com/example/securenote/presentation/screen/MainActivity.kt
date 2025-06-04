@@ -6,8 +6,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.example.securenote.presentation.navigation.SecureAppNavHost
 import com.example.securenote.presentation.navigation.SecureNoteDestination
@@ -19,19 +19,22 @@ class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isFirstLaunch = mainViewModel.isFirstLaunch.value
-        enableEdgeToEdge()
-        setContent {
-            SecureNoteTheme {
-                Surface(
-                    modifier = Modifier.Companion.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
 
+        enableEdgeToEdge()
+
+        setContent {
+            val isFirstLaunch = mainViewModel.isFirstLaunch.collectAsState()
+            val isDarkMode = mainViewModel.isDarkMode.collectAsState()
+
+            SecureNoteTheme(darkTheme = isDarkMode.value) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
                     SecureAppNavHost(
-                        startDestination = if (isFirstLaunch) SecureNoteDestination.FirstLaunch.route else SecureNoteDestination.Login.route,
+                        startDestination = if (isFirstLaunch.value) SecureNoteDestination.FirstLaunch.route else SecureNoteDestination.Login.route,
                     )
                 }
             }

@@ -8,6 +8,7 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo
+import com.example.securenote.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,17 +35,17 @@ class BiometricHelperImpl @Inject constructor(
             .setAllowedAuthenticators(authenticators)
 
         if (Build.VERSION.SDK_INT < 30) {
-            promptInfo.setNegativeButtonText("Cancel")
+            promptInfo.setNegativeButtonText(context.getString(R.string.cancel))
         }
 
         when (manager.canAuthenticate(authenticators)) {
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
-                resultState.value = BiometricResult.HardwareUnavailable
+                setErrorResult(msg = context.getString(R.string.biometric_hardware_unavailable))
                 return
             }
 
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                resultState.value = BiometricResult.FeatureUnavailable
+                setErrorResult(msg = context.getString(R.string.biometric_feature_unavailable))
                 return
             }
 
@@ -61,7 +62,7 @@ class BiometricHelperImpl @Inject constructor(
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    resultState.value = BiometricResult.AuthenticationError(errString.toString())
+                    setErrorResult(errString.toString(), errorCode)
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -71,11 +72,18 @@ class BiometricHelperImpl @Inject constructor(
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    resultState.value = BiometricResult.AuthenticationFailed
+                    setErrorResult(msg = context.getString(R.string.authentication_failed))
                 }
             }
         )
         prompt.authenticate(promptInfo.build())
+    }
+
+    fun setErrorResult(msg: String, errorCode: Int = 0) {
+        resultState.value = BiometricResult.AuthenticationError(
+            errorMsg = msg,
+            errorCode = errorCode
+        )
     }
 
     override fun resetResult() {
@@ -83,10 +91,9 @@ class BiometricHelperImpl @Inject constructor(
     }
 
     sealed interface BiometricResult {
-        data object HardwareUnavailable : BiometricResult
-        data object FeatureUnavailable : BiometricResult
-        data class AuthenticationError(val error: String) : BiometricResult
-        data object AuthenticationFailed : BiometricResult
+        data class AuthenticationError(val errorMsg: String, val errorCode: Int) :
+            BiometricResult
+
         data object AuthenticationSuccess : BiometricResult
         data object AuthenticationNotSet : BiometricResult
     }

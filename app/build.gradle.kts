@@ -93,4 +93,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.security.crypto)
+
+    implementation(libs.androidx.datastore.preferences)
 }

@@ -3,6 +3,7 @@ agp = "8.9.2"
 appcompat = "1.7.0"
 biometric = "1.1.0"
 converterGson = "2.9.0"
+datastorePreferences = "1.1.6"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
@@ -28,6 +29,7 @@ serialization = "1.6.3"
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
