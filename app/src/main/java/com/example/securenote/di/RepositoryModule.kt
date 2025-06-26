@@ -2,7 +2,7 @@ package com.example.securenote.di
 
 import com.example.securenote.data.local.AppSettingDataSource
 import com.example.securenote.data.local.datasource.AppSettingDataSourceImpl
-import com.example.securenote.data.repository.AppSettingsRepositoryImpl
+import com.example.securenote.data.AppSettingsRepositoryImpl
 import com.example.securenote.domain.repository.AppSettingsRepository
 import dagger.Binds
 import dagger.Module

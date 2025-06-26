@@ -1,4 +1,4 @@
-package com.example.securenote.data.repository
+package com.example.securenote.data
 
 import com.example.securenote.data.local.AppSettingDataSource
 import com.example.securenote.domain.repository.AppSettingsRepository

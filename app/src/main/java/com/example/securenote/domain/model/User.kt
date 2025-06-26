@@ -1,4 +1,4 @@
-package com.example.securenote.domain.entity
+package com.example.securenote.domain.model
 
 data class User(
     val id: String,

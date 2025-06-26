@@ -30,12 +30,13 @@ private val GreenPrimary = Color(0xFF529873)
 
 private val DarkColorScheme = darkColorScheme(
     primary = GreenPrimary,
-    onPrimary = Color.Black,
+    onPrimary = Color.White,
     background = Color(0xFF121212),
     surface = Color(0xFF1E1E1E),
     onSurface = Color(0xFFE0E0E0),
     secondary = Color(0xFF424242),
-    onSecondary = Color.White
+    onSecondary = Color.White,
+    onPrimaryContainer = Color(0xFF5B5959)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -45,7 +46,8 @@ private val LightColorScheme = lightColorScheme(
     surface = Color(0xFFF7F7F7),
     onSurface = Color(0xFF212121),
     secondary = Color(0xFFE0E0E0),
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
+    onPrimaryContainer = Color(0xFF838383)
 )
 
 private val AppTypography = Typography(
@@ -85,7 +87,7 @@ fun SecureNoteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {

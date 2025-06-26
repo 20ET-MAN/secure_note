@@ -3,12 +3,16 @@ package com.example.securenote.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.securenote.presentation.screen.auth.LoginScreen
 import com.example.securenote.presentation.screen.firstlaunch.FirstLaunchScreen
 import com.example.securenote.presentation.screen.home.HomeScreen
+import com.example.securenote.presentation.screen.notedetail.NoteDetailScreen
+import com.example.securenote.presentation.screen.setting.SettingScreen
 
 @Composable
 fun SecureAppNavHost(
@@ -41,7 +45,46 @@ fun SecureAppNavHost(
             )
         }
         composable(SecureNoteDestination.Home.route) {
-            HomeScreen()
+            HomeScreen(onGoToSetting = {
+                navHostController.navigate(SecureNoteDestination.Setting.route)
+            }, onGoToNoteDetail = { id ->
+                navHostController.navigate(
+                    SecureNoteDestination.NoteDetail.createRoute(
+                        noteId = id,
+                    )
+                )
+            })
+        }
+
+        composable(SecureNoteDestination.Setting.route) {
+            SettingScreen(onGoToLicense = {
+                navHostController.navigate(SecureNoteDestination.License.route)
+            }, onBackPress = {
+                navHostController.popBackStack()
+            })
+        }
+
+
+        composable(
+            route = SecureNoteDestination.NoteDetail.route,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            ),
+        ) { backStackEntry ->
+            /* use when get arguments in UI
+            val nodeId = backStackEntry.arguments?.getString("noteId")
+            NoteDetailScreen(noteId = nodeId, onBackPress = {
+                navHostController.popBackStack()
+            })*/
+            NoteDetailScreen(
+                onBackPress = {
+                    navHostController.popBackStack()
+                },
+            )
         }
     }
 }

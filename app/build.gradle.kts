@@ -95,4 +95,9 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.vico.compose.m3)
+
+    implementation(libs.accompanist.flowlayout)
+
 }

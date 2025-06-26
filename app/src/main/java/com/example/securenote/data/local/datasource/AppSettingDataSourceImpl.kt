@@ -38,11 +38,7 @@ class AppSettingDataSourceImpl @Inject constructor(private val dataStore: DataSt
         scope.launch {
             dataStore.data
                 .catch { exception ->
-                    if (exception is IOException) {
-                        emit(emptyPreferences())
-                    } else {
-                        throw exception
-                    }
+                    emit(emptyPreferences())
                 }
                 .map { preferences ->
                     preferences[DARK_MODE_KEY] == true

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             val isFirstLaunch = mainViewModel.isFirstLaunch.collectAsState()
             val isDarkMode = mainViewModel.isDarkMode.collectAsState()
 
-            SecureNoteTheme(darkTheme = isDarkMode.value) {
+            SecureNoteTheme(darkTheme = isDarkMode.value, dynamicColor = false) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {

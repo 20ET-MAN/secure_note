@@ -1,13 +1,13 @@
 package com.example.securenote.presentation.screen.auth
 
 import android.content.Intent
+import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +43,7 @@ import com.example.securenote.presentation.helper.biometric.BiometricHelperImpl.
 import com.example.securenote.presentation.helper.biometric.BiometricHelperImpl.BiometricResult.AuthenticationError
 import dagger.hilt.android.EntryPointAccessors
 
+
 @Composable
 fun LoginScreen(
     onNavigateToHome: () -> Unit,
@@ -51,7 +51,7 @@ fun LoginScreen(
     val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
     val activity = context as AppCompatActivity
-    val isDarkMode = viewModel.isDarkMode.collectAsState()
+
 
     val biometricHelper = remember {
         EntryPointAccessors
@@ -104,15 +104,18 @@ fun LoginScreen(
     }
 
     fun gotoBiometricSetting() {
-        if (Build.VERSION.SDK_INT >= 30) {
-            val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+        val intent: Intent = if (Build.VERSION.SDK_INT >= 30) {
+            Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
                 putExtra(
                     Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
                     BIOMETRIC_STRONG or DEVICE_CREDENTIAL
                 )
             }
-            enrollLauncher.launch(enrollIntent)
+        } else {
+            Intent(Settings.ACTION_SECURITY_SETTINGS)
         }
+
+        enrollLauncher.launch(intent)
         isShowGotoSettingBiometricDialog = false
     }
 
@@ -147,10 +150,6 @@ fun LoginScreen(
                     )
                 }
             }
-
-            Switch(checked = isDarkMode.value, onCheckedChange = { value ->
-                viewModel.switchAppMode(value)
-            })
         }
 
 
