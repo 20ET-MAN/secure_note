@@ -40,6 +40,12 @@ object AppModule {
     fun provideUserDao(appDatabase: AppDatabase) = appDatabase.userDao()
 
     @Provides
+    fun provideNoteDao(appDatabase: AppDatabase) = appDatabase.noteDao()
+
+    @Provides
+    fun provideNoteBlockDao(appDatabase: AppDatabase) = appDatabase.notBlockDao()
+
+    @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create {

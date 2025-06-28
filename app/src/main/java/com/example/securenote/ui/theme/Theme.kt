@@ -15,6 +15,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -123,3 +124,6 @@ fun SetSystemBarsColor(colorScheme: ColorScheme, useDarkIcons: Boolean) {
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = useDarkIcons
     }
 }
+
+@Composable
+fun ColorScheme.isLight() = this.background.luminance() > 0.5

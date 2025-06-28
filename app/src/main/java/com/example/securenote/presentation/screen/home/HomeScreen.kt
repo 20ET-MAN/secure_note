@@ -35,14 +35,12 @@ import com.example.securenote.presentation.screen.home.components.NotePage
 fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (String?) -> Unit) {
     val viewModel: HomeViewModel = hiltViewModel()
 
-    var selectedTab = viewModel.selectedTab.collectAsState()
+    var homeUIState = viewModel.homeUiState.collectAsState()
 
     val tabs = listOf(
         TabItem("Notes", painterResource(R.drawable.ic_note), 6),
         TabItem("Analytics", painterResource(R.drawable.ic_chart))
     )
-
-    val dumpList = listOf<Int>(1, 2, 3, 4, 5)
 
     BasePage(viewModel = viewModel) {
         Scaffold(
@@ -76,13 +74,16 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (String?) -> Unit) {
                 )
                 AppTabBar(
                     tabs = tabs,
-                    selectedTabIndex = selectedTab.value,
+                    selectedTabIndex = homeUIState.value.selectedTab,
                     onTabSelected = { viewModel.onTabChange(it) },
                 )
 
-                AnimatedContent(targetState = selectedTab.value, label = "TabContent") { tab ->
+                AnimatedContent(
+                    targetState = homeUIState.value.selectedTab,
+                    label = "TabContent"
+                ) { tab ->
                     when (tab) {
-                        0 -> NotePage(dumpList, onNoteEdits = { id ->
+                        0 -> NotePage(homeUIState.value.notes, onNoteEdits = { id ->
                             onGoToNoteDetail(id)
                         })
 
