@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     SecureAppNavHost(
-                        startDestination = if (isFirstLaunch.value) SecureNoteDestination.FirstLaunch.route else SecureNoteDestination.Login.route,
+                        startDestination = SecureNoteDestination.Home.route//if (isFirstLaunch.value) SecureNoteDestination.FirstLaunch.route else SecureNoteDestination.Login.route,
                     )
                 }
             }

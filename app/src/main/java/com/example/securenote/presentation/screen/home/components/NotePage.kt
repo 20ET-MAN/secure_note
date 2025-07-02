@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.securenote.R
@@ -31,7 +33,7 @@ import com.example.securenote.domain.model.Note
 import com.example.securenote.ui.theme.isLight
 
 @Composable
-fun NotePage(notes: List<Note>, onNoteEdits: (String) -> Unit) {
+fun NotePage(notes: List<Note>, onNoteEdits: (Long) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         itemsIndexed(items = notes) { index, item ->
             Column(
@@ -55,24 +57,36 @@ fun NotePage(notes: List<Note>, onNoteEdits: (String) -> Unit) {
                     )
                 }
                 Spacer(Modifier.height(24.dp))
-                Text(item.title, style = MaterialTheme.typography.bodyLarge)
-                Spacer(Modifier.height(24.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
                 Text(
-                    modifier = Modifier.padding(vertical = 24.dp),
-                    text = item.type.value.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
+                    item.title,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start
+                    )
+                )
+                Spacer(Modifier.height(12.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+                val prevContent =
+                    item.notesBlock.joinToString(separator = "\n") { it.content }
+                Text(
+                    modifier = Modifier.padding(top = 24.dp, bottom = 12.dp).fillMaxWidth(),
+                    text = prevContent.toString(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Start
+                    ),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 4
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                 Spacer(Modifier.height(24.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onNoteEdits(item.toString()) }
+                        .clickable { onNoteEdits(item.id) }
                 ) {
                     Text("Xem thêm")
                     Spacer(Modifier.width(8.dp))

@@ -10,4 +10,18 @@ class NoteDataSourceImpl @Inject constructor(private val noteDao: NoteDao) : Not
     override fun getNotes(): Flow<List<NoteEntity>> {
         return noteDao.getNotes();
     }
+
+    override suspend fun insertNote(note: NoteEntity): Long {
+        return noteDao.insertNote(note = note)
+    }
+
+    override suspend fun getNote(id: Long): NoteEntity {
+        return noteDao.getNote(id)
+    }
+
+    override suspend fun updateNote(note: NoteEntity) {
+        noteDao.updateNote(note = note)
+    }
+
+
 }

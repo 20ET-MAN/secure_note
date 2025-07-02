@@ -1,4 +1,4 @@
-package com.example.securenote.presentation.screen.components
+package com.example.securenote.presentation.screen.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,9 +28,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AppTabBar(
+fun HomeTabBar(
     tabs: List<TabItem>,
     selectedTabIndex: Int,
+    noteCount: Int = 0,
     onTabSelected: (Int) -> Unit,
 ) {
     Row(
@@ -65,7 +66,7 @@ fun AppTabBar(
                         contentDescription = tab.label,
                         tint = color,
                     )
-                    val countValue = if (tab.count == 0) "" else "(${tab.count})"
+                    val countValue = if (noteCount == 0 || index != 0) "" else "(${noteCount})"
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${tab.label} $countValue",
@@ -88,4 +89,4 @@ fun AppTabBar(
     }
 }
 
-data class TabItem(val label: String, val icon: Painter, val count: Int = 0)
+data class TabItem(val label: String, val icon: Painter)

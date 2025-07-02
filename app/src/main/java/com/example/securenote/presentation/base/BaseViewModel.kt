@@ -29,7 +29,7 @@ abstract class BaseViewModel(protected val errorHandler: ErrorHandler) : ViewMod
     }
 
     protected fun launchInitialData(
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ) {
         lastRetryBlock = block
         _pageStatus.value = PageStatus.INITIAL
@@ -42,7 +42,7 @@ abstract class BaseViewModel(protected val errorHandler: ErrorHandler) : ViewMod
     }
 
     protected fun launch(
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ) {
         lastRetryBlock = block
         _error.value = null
@@ -55,7 +55,7 @@ abstract class BaseViewModel(protected val errorHandler: ErrorHandler) : ViewMod
     }
 
     protected fun launchSilent(
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ): Job {
         return viewModelScope.launch(exceptionHandler) {
             block()
@@ -64,7 +64,7 @@ abstract class BaseViewModel(protected val errorHandler: ErrorHandler) : ViewMod
 
     protected fun launchWithCustomHandler(
         onError: ((Throwable) -> Unit)? = null,
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ): Job {
         val customHandler = CoroutineExceptionHandler { _, throwable ->
             if (onError != null) {

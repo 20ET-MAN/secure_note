@@ -2,6 +2,7 @@ package com.example.securenote.data
 
 import com.example.securenote.data.local.NoteBlockDataSource
 import com.example.securenote.data.local.NoteDataSource
+import com.example.securenote.data.translator.toEntity
 import com.example.securenote.data.translator.toModel
 import com.example.securenote.domain.model.Note
 import com.example.securenote.domain.repository.NoteRepository
@@ -14,12 +15,24 @@ class NoteRepositoryImpl @Inject constructor(
     private val noteBlockDataSource: NoteBlockDataSource,
 ) :
     NoteRepository {
-    override fun getNotes(): Flow<List<Note>> {
+    override fun getPrevNotes(): Flow<List<Note>> {
         return noteDataSource.getNotes().map { noteEntities ->
             noteEntities.map { noteEntity ->
-                val noteBlocks = noteBlockDataSource.getNoteBlockList(noteEntity.id)
+                val noteBlocks = noteBlockDataSource.getBlocksPrevByNoteId(noteEntity.id)
                 noteEntity.toModel(noteBlocks)
             }.toList()
         }
+    }
+
+    override suspend fun insertNote(note: Note): Long {
+        return noteDataSource.insertNote(note.toEntity())
+    }
+
+    override suspend fun getNote(id: Long): Note {
+        return noteDataSource.getNote(id).toModel()
+    }
+
+    override suspend fun updateNote(note: Note) {
+        noteDataSource.updateNote(note = note.toEntity())
     }
 }

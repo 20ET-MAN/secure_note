@@ -3,14 +3,13 @@ package com.example.securenote.presentation.screen.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +24,7 @@ import com.example.securenote.R
 fun AppAppBar(
     title: String,
     isShowNavigationBtn: Boolean = true,
-    isShowActionBtn: Boolean = false,
+    actionButton: (@Composable () -> Unit)?= null,
     onActionBtnClick: () -> Unit = {},
     onNavigationBtnClick: () -> Unit = {},
 ) {
@@ -49,12 +48,10 @@ fun AppAppBar(
             }
             Text(title, style = MaterialTheme.typography.titleLarge)
         }
-        if (isShowActionBtn) {
-            Icon(
-                imageVector = Icons.Filled.Settings,
-                contentDescription = null,
-                modifier = Modifier.clickable(onClick = onActionBtnClick)
-            )
+        actionButton?.let {
+            Box(modifier = Modifier.clickable(onClick = onActionBtnClick)){
+                it.invoke()
+            }
         }
     }
 }

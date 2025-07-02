@@ -69,9 +69,7 @@ fun SecureAppNavHost(
             route = SecureNoteDestination.NoteDetail.route,
             arguments = listOf(
                 navArgument("noteId") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
+                    type = NavType.LongType
                 }
             ),
         ) { backStackEntry ->

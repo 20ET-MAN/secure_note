@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,22 +26,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.securenote.R
 import com.example.securenote.presentation.base.BasePage
 import com.example.securenote.presentation.screen.components.AppAppBar
-import com.example.securenote.presentation.screen.components.AppTabBar
-import com.example.securenote.presentation.screen.components.TabItem
 import com.example.securenote.presentation.screen.home.components.AnalyticsPage
+import com.example.securenote.presentation.screen.home.components.HomeTabBar
 import com.example.securenote.presentation.screen.home.components.NotePage
+import com.example.securenote.presentation.screen.home.components.TabItem
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (String?) -> Unit) {
+fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (Long) -> Unit) {
     val viewModel: HomeViewModel = hiltViewModel()
 
     var homeUIState = viewModel.homeUiState.collectAsState()
 
-    val tabs = listOf(
-        TabItem("Notes", painterResource(R.drawable.ic_note), 6),
+    var tabs = mutableListOf(
+        TabItem("Notes", painterResource(R.drawable.ic_note)),
         TabItem("Analytics", painterResource(R.drawable.ic_chart))
     )
+
 
     BasePage(viewModel = viewModel) {
         Scaffold(
@@ -48,7 +50,7 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (String?) -> Unit) {
                 Box(
                     modifier = Modifier
                         .clickable {
-                            onGoToNoteDetail(null)
+                            onGoToNoteDetail(-1)
                         }
                         .background(
                             MaterialTheme.colorScheme.primary,
@@ -69,12 +71,18 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (String?) -> Unit) {
                 AppAppBar(
                     title = stringResource(R.string.app_name),
                     onActionBtnClick = onGoToSetting,
-                    isShowActionBtn = true,
-                    isShowNavigationBtn = false
+                    isShowNavigationBtn = false,
+                    actionButton = {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = null
+                        )
+                    }
                 )
-                AppTabBar(
+                HomeTabBar(
                     tabs = tabs,
                     selectedTabIndex = homeUIState.value.selectedTab,
+                    noteCount = homeUIState.value.notes.size,
                     onTabSelected = { viewModel.onTabChange(it) },
                 )
 

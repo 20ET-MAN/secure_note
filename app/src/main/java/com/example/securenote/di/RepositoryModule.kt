@@ -1,6 +1,7 @@
 package com.example.securenote.di
 
 import com.example.securenote.data.AppSettingsRepositoryImpl
+import com.example.securenote.data.NoteBlockRepositoryImpl
 import com.example.securenote.data.NoteRepositoryImpl
 import com.example.securenote.data.local.AppSettingDataSource
 import com.example.securenote.data.local.NoteBlockDataSource
@@ -9,6 +10,7 @@ import com.example.securenote.data.local.datasource.AppSettingDataSourceImpl
 import com.example.securenote.data.local.datasource.NoteBlockDataSourceImpl
 import com.example.securenote.data.local.datasource.NoteDataSourceImpl
 import com.example.securenote.domain.repository.AppSettingsRepository
+import com.example.securenote.domain.repository.NoteBlockRepository
 import com.example.securenote.domain.repository.NoteRepository
 import dagger.Binds
 import dagger.Module
@@ -40,4 +42,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindNoteBlockDataSource(noteBlockDataSourceImpl: NoteBlockDataSourceImpl): NoteBlockDataSource
+
+
+    @Binds
+    @Singleton
+    abstract fun bindNoteBlockRepository(noteBlockRepositoryImpl: NoteBlockRepositoryImpl): NoteBlockRepository
 }

@@ -5,7 +5,7 @@ sealed class SecureNoteDestination(val route: String) {
     object Login : SecureNoteDestination("login")
     object Home : SecureNoteDestination("home")
     object NoteDetail : SecureNoteDestination("note_detail/{noteId}") {
-        fun createRoute(noteId: String?) = "note_detail/$noteId"
+        fun createRoute(noteId: Long) = "note_detail/$noteId"
     }
 
     object Setting : SecureNoteDestination("setting")

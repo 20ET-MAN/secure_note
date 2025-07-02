@@ -22,7 +22,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         launchSilent {
-            noteRepository.getNotes().collect {
+            noteRepository.getPrevNotes().collect {
                 _homeUiState.value = _homeUiState.value.copy(notes = it)
             }
         }

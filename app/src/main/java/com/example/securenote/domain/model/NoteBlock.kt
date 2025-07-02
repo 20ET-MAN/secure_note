@@ -4,8 +4,9 @@ import com.example.securenote.domain.enum.BlockType
 
 
 data class NoteBlock(
-    val noteId: Long,
-    val order: Int,
-    val type: BlockType,
-    val content: String,
+    val id: Long = 0,
+    val noteId: Long = 0,
+    val order: Int = 1,
+    val type: BlockType = BlockType.TEXT,
+    val content: String = "",
 )

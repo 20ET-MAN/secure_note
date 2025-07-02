@@ -6,9 +6,20 @@ import com.example.securenote.domain.model.NoteBlock
 
 fun NoteBlockEntity.toModel(): NoteBlock {
     return NoteBlock(
+        id = id,
         noteId = noteId,
         order = order,
         type = BlockType.getBlockType(type),
+        content = content
+    )
+}
+
+fun NoteBlock.toModel(): NoteBlockEntity {
+    return NoteBlockEntity(
+        id = id,
+        noteId = noteId,
+        order = order,
+        type = type.value,
         content = content
     )
 }

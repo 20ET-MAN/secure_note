@@ -1,9 +1,9 @@
-package com.example.securenote.data.local
+package com.example.securenote.domain.repository
 
 import com.example.securenote.domain.model.NoteBlock
 import kotlinx.coroutines.flow.Flow
 
-interface NoteBlockDataSource {
+interface NoteBlockRepository {
     fun getBlocks(noteId: Long): Flow<List<NoteBlock>>
 
     suspend fun updateBlock(block: NoteBlock)
@@ -11,6 +11,4 @@ interface NoteBlockDataSource {
     suspend fun insertBlock(block: NoteBlock)
 
     suspend fun deleteBlock(block: NoteBlock)
-
-    suspend fun getBlocksPrevByNoteId(noteId: Long): List<NoteBlock>
 }
