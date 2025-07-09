@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface NoteDataSource {
     fun getNotes(): Flow<List<NoteEntity>>
     suspend fun insertNote(note: NoteEntity): Long
-    suspend fun getNote(id: Long): NoteEntity
+    fun getNote(id: Long): Flow<NoteEntity?>
     suspend fun updateNote(note: NoteEntity)
+    suspend fun deleteNote(id: Long)
 }

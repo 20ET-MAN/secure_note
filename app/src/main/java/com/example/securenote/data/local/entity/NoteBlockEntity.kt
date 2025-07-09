@@ -21,6 +21,7 @@ data class NoteBlockEntity(
     val order: Int,
     val type: Int,
     val content: String,
+    val createdAt: Long
 )
 
 

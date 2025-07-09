@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.securenote.presentation.component.InitialError
+import com.example.securenote.presentation.screen.components.InitialError
 import com.example.securenote.presentation.dialog.CommonErrorDialog
 
 @Composable

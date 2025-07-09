@@ -1,4 +1,4 @@
-package com.example.securenote.presentation.component
+package com.example.securenote.presentation.screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.example.securenote.presentation.component
+package com.example.securenote.presentation.screen.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

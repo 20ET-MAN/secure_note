@@ -1,13 +1,14 @@
 package com.example.securenote.presentation.screen.home
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -16,7 +17,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,10 +34,11 @@ import com.example.securenote.presentation.screen.home.components.AnalyticsPage
 import com.example.securenote.presentation.screen.home.components.HomeTabBar
 import com.example.securenote.presentation.screen.home.components.NotePage
 import com.example.securenote.presentation.screen.home.components.TabItem
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (Long) -> Unit) {
+fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (id: Long) -> Unit) {
     val viewModel: HomeViewModel = hiltViewModel()
 
     var homeUIState = viewModel.homeUiState.collectAsState()
@@ -43,6 +48,17 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (Long) -> Unit) {
         TabItem("Analytics", painterResource(R.drawable.ic_chart))
     )
 
+    val pagerState = rememberPagerState(pageCount = {
+        tabs.size
+    })
+
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            viewModel.onTabChange(page)
+        }
+    }
 
     BasePage(viewModel = viewModel) {
         Scaffold(
@@ -83,19 +99,26 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (Long) -> Unit) {
                     tabs = tabs,
                     selectedTabIndex = homeUIState.value.selectedTab,
                     noteCount = homeUIState.value.notes.size,
-                    onTabSelected = { viewModel.onTabChange(it) },
+                    onTabSelected = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(it)
+                        }
+                    },
                 )
 
-                AnimatedContent(
-                    targetState = homeUIState.value.selectedTab,
-                    label = "TabContent"
-                ) { tab ->
-                    when (tab) {
+                HorizontalPager(state = pagerState) { page ->
+                    when (page) {
                         0 -> NotePage(homeUIState.value.notes, onNoteEdits = { id ->
                             onGoToNoteDetail(id)
                         })
 
-                        1 -> AnalyticsPage()
+                        1 -> AnalyticsPage(
+                            homeUIState.value.analyticLineChartData,
+                            onLineChartChangeRange = {
+                                viewModel.loadLineChartData(it)
+                            },
+                            homeUIState.value.currentDateRange
+                        )
                     }
                 }
             }

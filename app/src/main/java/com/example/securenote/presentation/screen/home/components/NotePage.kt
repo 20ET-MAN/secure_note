@@ -70,7 +70,9 @@ fun NotePage(notes: List<Note>, onNoteEdits: (Long) -> Unit) {
                 val prevContent =
                     item.notesBlock.joinToString(separator = "\n") { it.content }
                 Text(
-                    modifier = Modifier.padding(top = 24.dp, bottom = 12.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(top = 24.dp, bottom = 12.dp)
+                        .fillMaxWidth(),
                     text = prevContent.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onPrimary,

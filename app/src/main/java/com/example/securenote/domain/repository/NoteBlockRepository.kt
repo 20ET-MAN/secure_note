@@ -11,4 +11,6 @@ interface NoteBlockRepository {
     suspend fun insertBlock(block: NoteBlock)
 
     suspend fun deleteBlock(block: NoteBlock)
+
+    fun getBlocksByTime(startTime: Long, endTime: Long): Flow<List<NoteBlock>>
 }

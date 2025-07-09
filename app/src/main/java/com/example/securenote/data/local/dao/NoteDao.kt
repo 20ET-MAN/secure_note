@@ -20,7 +20,7 @@ interface NoteDao {
         ORDER BY createAt DESC
     """
     )
-    fun getNotes(): Flow<List<NoteEntity>>
+    fun getNotes(): Flow<List<NoteEntity?>>
 
     @Query(
         """
@@ -29,8 +29,13 @@ interface NoteDao {
         ORDER BY createAt DESC
     """
     )
-    suspend fun getNote(id: Long): NoteEntity
+    fun getNote(id: Long): Flow<NoteEntity?>
 
     @Update
     suspend fun updateNote(note: NoteEntity)
+
+    @Query("DELETE FROM note WHERE id = :id")
+    suspend fun deleteNote(id: Long)
+
+
 }

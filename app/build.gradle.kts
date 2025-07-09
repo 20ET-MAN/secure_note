@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.vico.compose.m3)
+    implementation(libs.core)
 
     implementation(libs.accompanist.flowlayout)
 

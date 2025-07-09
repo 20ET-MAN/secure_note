@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.securenote.data.local.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -33,7 +35,12 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "app_database"
-        ).build()
+        ).addCallback(object : RoomDatabase.Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                db.setForeignKeyConstraintsEnabled(true)
+            }
+        }).build()
     }
 
     @Provides

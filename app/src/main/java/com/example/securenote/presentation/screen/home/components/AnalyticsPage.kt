@@ -7,6 +7,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,9 +43,12 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.securenote.R
+import com.example.securenote.domain.enum.DateRange
+import com.example.securenote.domain.model.ChartDataPoint
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
@@ -63,6 +70,7 @@ import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -76,8 +84,15 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Composable
-fun AnalyticsPage() {
+fun AnalyticsPage(
+    data: List<ChartDataPoint>,
+    onLineChartChangeRange: (DateRange) -> Unit,
+    currentDateRange: DateRange,
+) {
     val scrollState = rememberScrollState()
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
@@ -89,13 +104,52 @@ fun AnalyticsPage() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Quantitative analysis")
-            Icon(painter = painterResource(R.drawable.ic_document_filter), null)
+            Text(
+                "Quantitative analysis",
+                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+                fontWeight = FontWeight.Bold
+            )
+            Box {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DateRange.entries.forEachIndexed { index, value ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    value.label,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxSize(),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                onLineChartChangeRange(value)
+                            },
+                            colors = if (value == currentDateRange) MenuDefaults.itemColors()
+                                .copy(textColor = MaterialTheme.colorScheme.primary) else MenuDefaults.itemColors()
+                        )
+                    }
+                }
+                Icon(
+                    painter = painterResource(R.drawable.ic_document_filter),
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        expanded = true
+                    },
+                )
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        MyLineChart()
+        MyLineChart(data = data)
         Spacer(modifier = Modifier.height(24.dp))
-        Text("Tag analysis")
+        Text(
+            "Tag analysis",
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+            fontWeight = FontWeight.Bold
+        )
         PieChart()
     }
 }
@@ -156,11 +210,21 @@ internal fun rememberMarker(
 }
 
 @Composable
-fun MyLineChart() {
+fun MyLineChart(data: List<ChartDataPoint>) {
+    val labels = data.map { it.label }
     val modelProducer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(data) {
+        val yValues = data.map { it.value.toFloat() }
+        val xValues = data.indices.map { it.toFloat() }
+
         modelProducer.runTransaction {
-            lineSeries { series(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11) }
+            lineSeries {
+                series(
+                    x = xValues,
+                    y = yValues
+                )
+            }
         }
     }
 
@@ -179,6 +243,17 @@ fun MyLineChart() {
         ),
     )
 
+
+    val bottomAxisFormatter = CartesianValueFormatter { _, value, _ ->
+        val index = value.toInt()
+        if (index in labels.indices) {
+            labels[index]
+        } else {
+            "-"
+        }
+    }
+
+
     CartesianChartHost(
         chart = rememberCartesianChart(
 
@@ -194,7 +269,8 @@ fun MyLineChart() {
             bottomAxis = HorizontalAxis.rememberBottom(
                 line = lineConfig,
                 label = label,
-                guideline = guideLineConfig
+                guideline = guideLineConfig,
+                valueFormatter = bottomAxisFormatter
             ),
             marker = rememberMarker(MarkerValueFormatter),
         ),
@@ -232,7 +308,6 @@ fun InteractiveAnimatedPieChart(
     val density = LocalDensity.current
     var showLabels by remember { mutableStateOf(false) }
 
-    // Animation trigger
     LaunchedEffect(data) {
         animatedSweepAngles.forEachIndexed { index, anim ->
             anim.animateTo(
@@ -266,7 +341,6 @@ fun InteractiveAnimatedPieChart(
                 useCenter = true
             )
 
-            // Draw percentage label
             val angleRad = Math.toRadians((startAngle + sweep / 2).toDouble())
             val labelX = center.x + cos(angleRad).toFloat() * radius * 0.6f
             val labelY = center.y + sin(angleRad).toFloat() * radius * 0.6f

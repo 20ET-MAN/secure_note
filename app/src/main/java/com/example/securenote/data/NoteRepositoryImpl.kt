@@ -18,7 +18,8 @@ class NoteRepositoryImpl @Inject constructor(
     override fun getPrevNotes(): Flow<List<Note>> {
         return noteDataSource.getNotes().map { noteEntities ->
             noteEntities.map { noteEntity ->
-                val noteBlocks = noteBlockDataSource.getBlocksPrevByNoteId(noteEntity.id)
+                val noteBlocks =
+                    noteBlockDataSource.getBlocksPrevByNoteId(noteEntity.id).map { it.toModel() }
                 noteEntity.toModel(noteBlocks)
             }.toList()
         }
@@ -28,11 +29,15 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDataSource.insertNote(note.toEntity())
     }
 
-    override suspend fun getNote(id: Long): Note {
-        return noteDataSource.getNote(id).toModel()
+    override fun getNote(id: Long): Flow<Note?> {
+        return noteDataSource.getNote(id).map { it?.toModel() }
     }
 
     override suspend fun updateNote(note: Note) {
         noteDataSource.updateNote(note = note.toEntity())
+    }
+
+    override suspend fun deleteNote(id: Long) {
+        noteDataSource.deleteNote(id)
     }
 }

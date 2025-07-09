@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.securenote.presentation.screen.auth.LoginScreen
 import com.example.securenote.presentation.screen.firstlaunch.FirstLaunchScreen
 import com.example.securenote.presentation.screen.home.HomeScreen
+import com.example.securenote.presentation.screen.imagedetail.ImageDetailScreen
 import com.example.securenote.presentation.screen.notedetail.NoteDetailScreen
 import com.example.securenote.presentation.screen.setting.SettingScreen
 
@@ -73,12 +74,35 @@ fun SecureAppNavHost(
                 }
             ),
         ) { backStackEntry ->
-            /* use when get arguments in UI
-            val nodeId = backStackEntry.arguments?.getString("noteId")
-            NoteDetailScreen(noteId = nodeId, onBackPress = {
-                navHostController.popBackStack()
-            })*/
+
             NoteDetailScreen(
+                onBackPress = {
+                    navHostController.popBackStack()
+                },
+                onNavigateToImageDetail = { imagePath, index ->
+                    navHostController.navigate(
+                        SecureNoteDestination.ImageDetail.createRoute(
+                            imagePath, index
+                        )
+                    )
+                }
+            )
+        }
+
+        composable(
+            route = SecureNoteDestination.ImageDetail.route,
+            arguments = listOf(
+                navArgument("imagePaths") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("index") {
+                    type = NavType.IntType
+                },
+            ),
+        ) { backStackEntry ->
+            ImageDetailScreen(
                 onBackPress = {
                     navHostController.popBackStack()
                 },

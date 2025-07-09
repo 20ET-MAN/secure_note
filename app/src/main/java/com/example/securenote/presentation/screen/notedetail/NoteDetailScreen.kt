@@ -1,18 +1,19 @@
 package com.example.securenote.presentation.screen.notedetail
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -48,8 +54,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -57,14 +65,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.example.securenote.R
 import com.example.securenote.domain.enum.BlockType
+import com.example.securenote.domain.enum.NoteType
 import com.example.securenote.presentation.base.BasePage
+import com.example.securenote.presentation.dialog.CommonErrorDialog
 import com.example.securenote.presentation.helper.saveImageUriToInternalStorage
 import com.example.securenote.presentation.screen.components.AppAppBar
 import com.example.securenote.presentation.screen.components.AppTextField
+import kotlinx.coroutines.delay
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 @Composable
-fun NoteDetailScreen(onBackPress: () -> Boolean) {
+fun NoteDetailScreen(
+    onBackPress: () -> Boolean,
+    onNavigateToImageDetail: (List<String>, Int) -> Unit,
+) {
     val context = LocalContext.current
     val viewmodel: NoteDetailViewModel = hiltViewModel()
     val noteDetailUiState = viewmodel.noteDetailUiState.collectAsState().value
@@ -93,6 +108,12 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
         ), label = "FAB_Offset"
     )
 
+    val scrollState = rememberLazyListState()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var isFirstShowKeyBoard by remember { mutableStateOf(true) }
+
     LaunchedEffect(rootSize) {
         if (!isInitialized && rootSize.x > 0 && rootSize.y > 0) {
             offsetX = rootSize.x - fabSizePx - horizontalPadding
@@ -101,34 +122,51 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
         }
     }
 
-    LaunchedEffect(noteDetailUiState.savedNote) {
+    LaunchedEffect(noteDetailUiState.savedNote, noteDetailUiState.isAddImageDone) {
         if (noteDetailUiState.savedNote) {
             focusManager.clearFocus()
+            focusRequester.freeFocus()
             onBackPress()
         }
+    }
+
+    LaunchedEffect(noteDetailUiState.noteBlock) {
+        if (noteDetailUiState.noteBlock.isNotEmpty()) {
+            delay(300)
+            scrollState.animateScrollToItem(
+                noteDetailUiState.noteBlock.lastIndex,
+                scrollOffset = scrollState.layoutInfo.afterContentPadding
+            )
+            if (!scrollState.isScrollInProgress && isFirstShowKeyBoard) {
+                focusRequester.requestFocus()
+                keyboardController?.hide()
+            }
+        }
+    }
+
+
+    BackHandler {
+        viewmodel.onSave()
     }
 
     val pickMultipleMedia = rememberLauncherForActivityResult(PickMultipleVisualMedia(5)) { uris ->
         // Callback is invoked after the user selects media items or closes the
         // photo picker.
         if (uris.isNotEmpty()) {
-            uris.forEach { imageUri ->
+            var imagePaths = ""
+            uris.forEachIndexed { index, imageUri ->
                 val imagePath = context.saveImageUriToInternalStorage(imageUri)
                 imagePath?.let { it ->
-/*                    val block = NoteBlock(
-                        id = ,
-                        noteId = viewmodel.noteId,
-                        order = 1,
-                        type = BlockType.IMAGE,
-                        content = it
-                    )*/
+                    imagePaths = if (index == 0) imagePaths.plus(it) else imagePaths.plus(",$it")
+                    Timber.d("Namnt: imagePath = $imagePath")
+                    //imagePath = /data/user/0/com.example.securenote/files/1751534750022.jpg
                 }
             }
-            Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
+            viewmodel.editBlockTypeImage(imagePaths)
+            Timber.d("Number of items selected: ${uris.size}")
         } else {
-            Log.d("PhotoPicker", "No media selected")
+            Timber.d("No media selected")
         }
-
     }
 
     BasePage(viewmodel) {
@@ -147,27 +185,46 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
                         "Note", onNavigationBtnClick = {
                             viewmodel.onSave()
                         }, actionButton = {
-                            Row(
-                                modifier = Modifier
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        shape = RoundedCornerShape(4.dp)
+                            Box {
+                                DropdownMenu(
+                                    expanded = noteDetailUiState.isOpenActionMenu,
+                                    onDismissRequest = { }
+                                ) {
+                                    NoteType.entries.filter { it != NoteType.OTHER }
+                                        .forEachIndexed { index, value ->
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        value.typeName,
+                                                        textAlign = TextAlign.Center,
+                                                        modifier = Modifier.fillMaxSize()
+                                                    )
+                                                },
+                                                onClick = {
+                                                    viewmodel.onChangeTag(value)
+                                                },
+                                            )
+                                        }
+                                }
+                                Row(modifier = Modifier.clickable {
+                                    viewmodel.showSelectTagBtn(
+                                        true
                                     )
-                                    .padding(6.dp)
-                            ) {
-                                Text(
-                                    "SAVE",
-                                    style = MaterialTheme.typography.titleLarge.copy(
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        fontWeight = Bold
+                                }, verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        if (noteDetailUiState.note.type == NoteType.OTHER) "SelectTag" else noteDetailUiState.note.type.typeName,
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     )
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_save_ouline),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                )
+                                    Spacer(Modifier.width(8.dp))
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_tag),
+                                        contentDescription = null,
+                                        tint = noteDetailUiState.note.type.color
+                                    )
+                                }
                             }
                         }, onActionBtnClick = {
                             viewmodel.onSave()
@@ -180,7 +237,14 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
                                 rootSize = Offset(size.width.toFloat(), size.height.toFloat())
                             },
                     ) {
-                        Column {
+                        Column(
+                            Modifier.padding(
+                                start = 24.dp,
+                                end = 24.dp,
+                                top = 16.dp,
+                                bottom = 32.dp
+                            )
+                        ) {
                             AppTextField(
                                 value = noteDetailUiState.note.title,
                                 hint = "Tiêu đề!!!",
@@ -192,17 +256,27 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     textAlign = TextAlign.Start
                                 ),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        focusRequester.requestFocus()
+                                    },
+                                )
                             ) { title ->
                                 viewmodel.onNoteTitleChange(title)
                             }
+                            Spacer(Modifier.height(16.dp))
                             LazyColumn(
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                state = scrollState
                             ) {
                                 itemsIndexed(
                                     items = noteDetailUiState.noteBlock,
                                     key = { index, block ->
                                         block.id
-                                    }
+                                    },
                                 ) { index, block ->
                                     when (block.type) {
                                         BlockType.TEXT -> {
@@ -213,9 +287,10 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
                                                     textAlign = TextAlign.Start
                                                 ),
                                                 onValueChange = { value ->
+                                                    isFirstShowKeyBoard = false
                                                     viewmodel.updateBlock(block.copy(content = value))
                                                 },
-                                                hint = "Thêm note đi mà <3 !!!",
+                                                hint = if (noteDetailUiState.noteBlock.size == 1) "Thêm note đi mà <3 !!!" else "...",
                                                 modifier = if (index == noteDetailUiState.noteBlock.lastIndex) Modifier.focusRequester(
                                                     focusRequester
                                                 ) else Modifier
@@ -224,7 +299,11 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
 
                                         BlockType.IMAGE -> {
                                             ImageBlockItem(
-                                                imagePath = block.content
+                                                content = block.content,
+                                                onImageClick = { imgUris, index ->
+                                                    focusManager.clearFocus()
+                                                    onNavigateToImageDetail(imgUris, index)
+                                                }
                                             )
                                         }
                                     }
@@ -271,19 +350,49 @@ fun NoteDetailScreen(onBackPress: () -> Boolean) {
                         }
                     }
                 }
+                noteDetailUiState.noteErrorMessage?.let {
+                    CommonErrorDialog(
+                        show = true,
+                        errorMessage = it,
+                        showNegativeButton = true,
+                        negativeButtonText = "Cancel",
+                        positiveButtonText = "Back",
+                        negativeButtonClick = {
+                            viewmodel.clearNoteErrorMessage()
+                        }) {
+                        viewmodel.deleteNote()
+                        viewmodel.clearNoteErrorMessage()
+                        onBackPress()
+                    }
+                }
             },
         )
     }
 }
 
 @Composable
-fun ImageBlockItem(imagePath: String) {
-    Image(
-        painter = rememberAsyncImagePainter("file://$imagePath"),
-        contentDescription = null,
+fun ImageBlockItem(content: String, onImageClick: (List<String>, Int) -> Unit) {
+    FlowRow(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .padding(8.dp)
-    )
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        maxItemsInEachRow = 3
+    ) {
+        val imagePaths = content.split(",")
+        imagePaths.forEachIndexed { index, item ->
+            val imagePath = "file://$item"
+            Image(
+                painter = rememberAsyncImagePainter(imagePath),
+                contentDescription = null,
+                modifier = Modifier
+                    .clickable {
+                        onImageClick(imagePaths, index)
+                    }
+                    .fillMaxSize(0.3f)
+            )
+        }
+    }
 }
+
+

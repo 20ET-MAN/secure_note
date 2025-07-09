@@ -1,6 +1,7 @@
 package com.example.securenote.domain.model
 
 import com.example.securenote.domain.enum.BlockType
+import com.example.securenote.util.toTimeDateString
 
 
 data class NoteBlock(
@@ -9,4 +10,5 @@ data class NoteBlock(
     val order: Int = 1,
     val type: BlockType = BlockType.TEXT,
     val content: String = "",
+    val createdAt: String =  System.currentTimeMillis().toTimeDateString()
 )

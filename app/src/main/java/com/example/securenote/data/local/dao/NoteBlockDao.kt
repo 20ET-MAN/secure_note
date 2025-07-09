@@ -19,7 +19,7 @@ interface NoteBlockDao {
         ORDER BY `order` ASC
     """
     )
-    fun getBlocksByNodeId(noteId: Long): Flow<List<NoteBlockEntity>>
+    fun getBlocksByNodeId(noteId: Long): Flow<List<NoteBlockEntity?>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBlock(block: NoteBlockEntity)
@@ -38,5 +38,14 @@ interface NoteBlockDao {
         LIMIT 3
     """
     )
-    suspend fun getBlocksPrevByNoteId(noteId: Long): List<NoteBlockEntity>
+    suspend fun getBlocksPrevByNoteId(noteId: Long): List<NoteBlockEntity?>
+
+    @Query(
+        """
+    SELECT * FROM note_block
+    WHERE createdAt BETWEEN :startTime AND :endTime
+    ORDER BY createdAt ASC
+    """
+    )
+    fun getBlocksByTime(startTime: Long, endTime: Long): Flow<List<NoteBlockEntity?>>
 }
