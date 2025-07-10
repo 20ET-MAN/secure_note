@@ -1,8 +1,8 @@
 package com.example.securenote.data
 
-import com.example.securenote.data.local.NoteBlockDataSource
-import com.example.securenote.data.translator.toEntity
-import com.example.securenote.data.translator.toModel
+import com.example.securenote.data.local.datasource.NoteBlockDataSource
+import com.example.securenote.data.local.translator.toEntity
+import com.example.securenote.data.local.translator.toModel
 import com.example.securenote.domain.model.NoteBlock
 import com.example.securenote.domain.repository.NoteBlockRepository
 import jakarta.inject.Inject

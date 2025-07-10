@@ -108,16 +108,20 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (id: Long) -> Unit) 
 
                 HorizontalPager(state = pagerState) { page ->
                     when (page) {
-                        0 -> NotePage(homeUIState.value.notes, onNoteEdits = { id ->
-                            onGoToNoteDetail(id)
-                        })
+                        0 -> NotePage(
+                            homeUIState.value.notes,
+                            onNoteEdits = { id ->
+                                onGoToNoteDetail(id)
+                            },
+                        )
 
                         1 -> AnalyticsPage(
-                            homeUIState.value.analyticLineChartData,
+                            lineData = homeUIState.value.analyticLineChartData,
                             onLineChartChangeRange = {
                                 viewModel.loadLineChartData(it)
                             },
-                            homeUIState.value.currentDateRange
+                            currentDateRange = homeUIState.value.currentDateRange,
+                            pieData = homeUIState.value.pieChartData
                         )
                     }
                 }

@@ -1,15 +1,19 @@
 package com.example.securenote.di
 
 import com.example.securenote.data.AppSettingsRepositoryImpl
+import com.example.securenote.data.NewsRepositoryImpl
 import com.example.securenote.data.NoteBlockRepositoryImpl
 import com.example.securenote.data.NoteRepositoryImpl
-import com.example.securenote.data.local.AppSettingDataSource
-import com.example.securenote.data.local.NoteBlockDataSource
-import com.example.securenote.data.local.NoteDataSource
-import com.example.securenote.data.local.datasource.AppSettingDataSourceImpl
-import com.example.securenote.data.local.datasource.NoteBlockDataSourceImpl
-import com.example.securenote.data.local.datasource.NoteDataSourceImpl
+import com.example.securenote.data.local.datasource.AppSettingDataSource
+import com.example.securenote.data.local.datasource.NoteBlockDataSource
+import com.example.securenote.data.local.datasource.NoteDataSource
+import com.example.securenote.data.local.datasourceImpl.AppSettingDataSourceImpl
+import com.example.securenote.data.local.datasourceImpl.NoteBlockDataSourceImpl
+import com.example.securenote.data.local.datasourceImpl.NoteDataSourceImpl
+import com.example.securenote.data.remote.datasource.NewsRemoteDataSource
+import com.example.securenote.data.remote.datasourceimpl.NewRemoteDataSourceImpl
 import com.example.securenote.domain.repository.AppSettingsRepository
+import com.example.securenote.domain.repository.NewsRepository
 import com.example.securenote.domain.repository.NoteBlockRepository
 import com.example.securenote.domain.repository.NoteRepository
 import dagger.Binds
@@ -47,4 +51,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindNoteBlockRepository(noteBlockRepositoryImpl: NoteBlockRepositoryImpl): NoteBlockRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNewsRemoteDataSource(newRemoteDataSourceImpl: NewRemoteDataSourceImpl): NewsRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindNewsRepository(newsRepositoryImpl: NewsRepositoryImpl): NewsRepository
 }

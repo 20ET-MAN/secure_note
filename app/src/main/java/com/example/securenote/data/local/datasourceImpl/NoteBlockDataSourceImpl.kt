@@ -1,7 +1,7 @@
-package com.example.securenote.data.local.datasource
+package com.example.securenote.data.local.datasourceImpl
 
-import com.example.securenote.data.local.NoteBlockDataSource
 import com.example.securenote.data.local.dao.NoteBlockDao
+import com.example.securenote.data.local.datasource.NoteBlockDataSource
 import com.example.securenote.data.local.entity.NoteBlockEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -93,12 +93,14 @@ fun NotePage(notes: List<Note>, onNoteEdits: (Long) -> Unit) {
                     Text("Xem thêm")
                     Spacer(Modifier.width(8.dp))
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_right),
+                        painter = painterResource(R.drawable.ic_line_arrow_right),
                         contentDescription = null
                     )
                 }
             }
-
+            if (index == notes.lastIndex) {
+                Spacer(Modifier.height(100.dp))
+            }
         }
         if (notes.isEmpty()) {
             item {

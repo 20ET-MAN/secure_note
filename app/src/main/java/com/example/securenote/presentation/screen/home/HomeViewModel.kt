@@ -2,8 +2,10 @@ package com.example.securenote.presentation.screen.home
 
 import com.example.securenote.domain.enum.DateRange
 import com.example.securenote.domain.repository.NoteRepository
+import com.example.securenote.domain.usecase.BaseUseCase
 import com.example.securenote.domain.usecase.GetBlocksByTimeUseCase
 import com.example.securenote.domain.usecase.GetBlocksByTimeUseCaseParams
+import com.example.securenote.domain.usecase.GetTagPercentagesUseCase
 import com.example.securenote.presentation.base.BaseViewModel
 import com.example.securenote.util.ErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +20,7 @@ class HomeViewModel @Inject constructor(
     errorHandler: ErrorHandler,
     private val noteRepository: NoteRepository,
     private val getBlocksByTimeUseCase: GetBlocksByTimeUseCase,
+    private val getTagPercentagesUseCase: GetTagPercentagesUseCase,
 ) :
     BaseViewModel(errorHandler = errorHandler) {
 
@@ -33,7 +36,11 @@ class HomeViewModel @Inject constructor(
             }
         }
         loadLineChartData()
-
+        launchSilent {
+            getTagPercentagesUseCase.invoke(BaseUseCase.NoParams()).collect { pieList ->
+                _homeUiState.update { it.copy(pieChartData = pieList) }
+            }
+        }
     }
 
     fun loadLineChartData(dateRange: DateRange = DateRange.LAST_7_DAYS) {

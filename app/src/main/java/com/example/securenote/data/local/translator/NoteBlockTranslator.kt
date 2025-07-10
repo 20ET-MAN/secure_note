@@ -1,4 +1,4 @@
-package com.example.securenote.data.translator
+package com.example.securenote.data.local.translator
 
 import com.example.securenote.data.local.entity.NoteBlockEntity
 import com.example.securenote.domain.enum.BlockType

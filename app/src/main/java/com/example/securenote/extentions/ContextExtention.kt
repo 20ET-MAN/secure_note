@@ -1,4 +1,4 @@
-package com.example.securenote.presentation.helper
+package com.example.securenote.extentions
 
 import android.content.Context
 import android.graphics.Bitmap

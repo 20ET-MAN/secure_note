@@ -33,6 +33,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,13 +67,12 @@ import coil3.compose.rememberAsyncImagePainter
 import com.example.securenote.R
 import com.example.securenote.domain.enum.BlockType
 import com.example.securenote.domain.enum.NoteType
+import com.example.securenote.extentions.saveImageUriToInternalStorage
 import com.example.securenote.presentation.base.BasePage
 import com.example.securenote.presentation.dialog.CommonErrorDialog
-import com.example.securenote.presentation.helper.saveImageUriToInternalStorage
 import com.example.securenote.presentation.screen.components.AppAppBar
 import com.example.securenote.presentation.screen.components.AppTextField
 import kotlinx.coroutines.delay
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 @Composable
@@ -158,14 +158,9 @@ fun NoteDetailScreen(
                 val imagePath = context.saveImageUriToInternalStorage(imageUri)
                 imagePath?.let { it ->
                     imagePaths = if (index == 0) imagePaths.plus(it) else imagePaths.plus(",$it")
-                    Timber.d("Namnt: imagePath = $imagePath")
-                    //imagePath = /data/user/0/com.example.securenote/files/1751534750022.jpg
                 }
             }
             viewmodel.editBlockTypeImage(imagePaths)
-            Timber.d("Number of items selected: ${uris.size}")
-        } else {
-            Timber.d("No media selected")
         }
     }
 
@@ -188,21 +183,25 @@ fun NoteDetailScreen(
                             Box {
                                 DropdownMenu(
                                     expanded = noteDetailUiState.isOpenActionMenu,
-                                    onDismissRequest = { }
+                                    onDismissRequest = { viewmodel.showSelectTagBtn(false) }
                                 ) {
-                                    NoteType.entries.filter { it != NoteType.OTHER }
+                                    NoteType.entries
                                         .forEachIndexed { index, value ->
+                                            val isSelected = value == noteDetailUiState.note.type
                                             DropdownMenuItem(
                                                 text = {
                                                     Text(
                                                         value.typeName,
                                                         textAlign = TextAlign.Center,
-                                                        modifier = Modifier.fillMaxSize()
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        style = MaterialTheme.typography.bodyLarge
                                                     )
                                                 },
                                                 onClick = {
                                                     viewmodel.onChangeTag(value)
                                                 },
+                                                colors = if (isSelected) MenuDefaults.itemColors()
+                                                    .copy(textColor = MaterialTheme.colorScheme.primary) else MenuDefaults.itemColors()
                                             )
                                         }
                                 }
@@ -212,9 +211,9 @@ fun NoteDetailScreen(
                                     )
                                 }, verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        if (noteDetailUiState.note.type == NoteType.OTHER) "SelectTag" else noteDetailUiState.note.type.typeName,
+                                        if (noteDetailUiState.note.type == NoteType.OTHER) "Select Tag" else noteDetailUiState.note.type.typeName,
                                         style = MaterialTheme.typography.bodyLarge.copy(
-                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            color = noteDetailUiState.note.type.color,
                                             fontWeight = FontWeight.Bold
                                         )
                                     )

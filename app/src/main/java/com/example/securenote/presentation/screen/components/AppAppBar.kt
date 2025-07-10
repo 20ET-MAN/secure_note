@@ -40,7 +40,7 @@ fun AppAppBar(
         Row {
             if (isShowNavigationBtn) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_arrow_left),
+                    painter = painterResource(R.drawable.ic_line_arrow_left),
                     contentDescription = null,
                     modifier = Modifier.clickable(onClick = onNavigationBtnClick)
                 )

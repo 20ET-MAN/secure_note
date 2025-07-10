@@ -15,5 +15,7 @@
     <string name="login_sc_biometric_error_title">Notification</string>
     <string name="login_sc_biometric_error_description">Please set up biometrics or screen lock to use the app.</string>
     <string name="login_sc_biometric_error_btn">Go to secure setting</string>
+    <string name="home_quantity_analysis_title">Quantity Analysis</string>
+    <string name="home_tags_overview_title">Tags Overview</string>
 
 </resources>

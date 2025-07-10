@@ -38,17 +38,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.securenote.R
 import com.example.securenote.domain.enum.DateRange
-import com.example.securenote.domain.model.ChartDataPoint
+import com.example.securenote.domain.model.LineChartDataPoint
+import com.example.securenote.domain.model.PieData
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
@@ -85,72 +86,32 @@ import kotlin.math.sin
 
 @Composable
 fun AnalyticsPage(
-    data: List<ChartDataPoint>,
+    lineData: List<LineChartDataPoint>,
+    pieData: List<PieData>,
     onLineChartChangeRange: (DateRange) -> Unit,
     currentDateRange: DateRange,
 ) {
     val scrollState = rememberScrollState()
-    var expanded by remember {
-        mutableStateOf(false)
-    }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Quantitative analysis",
-                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
-                fontWeight = FontWeight.Bold
-            )
-            Box {
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DateRange.entries.forEachIndexed { index, value ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    value.label,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxSize(),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            },
-                            onClick = {
-                                expanded = false
-                                onLineChartChangeRange(value)
-                            },
-                            colors = if (value == currentDateRange) MenuDefaults.itemColors()
-                                .copy(textColor = MaterialTheme.colorScheme.primary) else MenuDefaults.itemColors()
-                        )
-                    }
-                }
-                Icon(
-                    painter = painterResource(R.drawable.ic_document_filter),
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        expanded = true
-                    },
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        MyLineChart(data = data)
+        LineChartHeader(
+            onLineChartChangeRange = { onLineChartChangeRange(it) },
+            currentDateRange = currentDateRange
+        )
+        LineChart(data = lineData)
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            "Tag analysis",
+            stringResource(R.string.home_tags_overview_title),
             style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
             fontWeight = FontWeight.Bold
         )
-        PieChart()
+        PieChart(pieData = pieData)
+        Spacer(Modifier.height(100.dp))
     }
 }
 
@@ -210,7 +171,7 @@ internal fun rememberMarker(
 }
 
 @Composable
-fun MyLineChart(data: List<ChartDataPoint>) {
+fun LineChart(data: List<LineChartDataPoint>) {
     val labels = data.map { it.label }
     val modelProducer = remember { CartesianChartModelProducer() }
 
@@ -295,11 +256,12 @@ fun MyLineChart(data: List<ChartDataPoint>) {
 
 
 @Composable
-fun InteractiveAnimatedPieChart(
-    data: List<Float>,
-    colors: List<Color>,
+fun AnimatedPieChart(
+    pieData: List<PieData>,
     modifier: Modifier = Modifier,
 ) {
+    val data = pieData.map { it.value }
+    val colors = pieData.map { it.noteType.color }
     val total = data.sum()
     val sweepPercentages = data.map { it / total }
     val animatedSweepAngles = remember {
@@ -308,7 +270,7 @@ fun InteractiveAnimatedPieChart(
     val density = LocalDensity.current
     var showLabels by remember { mutableStateOf(false) }
 
-    LaunchedEffect(data) {
+    LaunchedEffect(pieData) {
         animatedSweepAngles.forEachIndexed { index, anim ->
             anim.animateTo(
                 targetValue = sweepPercentages[index] * 360f,
@@ -375,41 +337,21 @@ fun InteractiveAnimatedPieChart(
 
 
 @Composable
-fun PieChart() {
-    val data = listOf(1f, 49f, 15f, 35f)
-    val colors = listOf(
-        Color(0xFFE57373),
-        Color(0xFF64B5F6),
-        Color(0xFF81C784),
-        Color(0xFFFFD54F)
-    )
-    val labels = listOf(
-        "AAAAAAA",
-        "BBBBBBBB",
-        "CCCC",
-        "D",
-    )
-
+fun PieChart(pieData: List<PieData>) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        InteractiveAnimatedPieChart(data = data, colors = colors)
-        PieChartLegend(
-            data = data,
-            labels = labels,
-            colors = colors
-        )
+        AnimatedPieChart(pieData = pieData)
+        PieChartTagLabels(pieData = pieData)
     }
 }
 
 @Composable
-fun PieChartLegend(
-    data: List<Float>,
-    labels: List<String>,
-    colors: List<Color>,
+fun PieChartTagLabels(
+    pieData: List<PieData>,
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
@@ -417,7 +359,7 @@ fun PieChartLegend(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        data.forEachIndexed { index, value ->
+        pieData.forEachIndexed { index, value ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -426,12 +368,65 @@ fun PieChartLegend(
                     modifier = Modifier
                         .size(16.dp)
                         .background(
-                            colors[index % colors.size],
+                            pieData[index % pieData.size].noteType.color,
                             shape = RoundedCornerShape(size = 4.dp)
                         )
                 )
-                Text(text = "${labels[index]}: ${value.roundToInt()}%")
+                Text(text = "${pieData[index].noteType.typeName}: ${pieData[index].value.roundToInt()}%")
             }
+        }
+    }
+}
+
+@Composable
+fun LineChartHeader(
+    onLineChartChangeRange: (DateRange) -> Unit,
+    currentDateRange: DateRange,
+) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            stringResource(R.string.home_quantity_analysis_title),
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+            fontWeight = FontWeight.Bold
+        )
+        Box {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DateRange.entries.forEachIndexed { index, value ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                value.label,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxSize(),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            onLineChartChangeRange(value)
+                        },
+                        colors = if (value == currentDateRange) MenuDefaults.itemColors()
+                            .copy(textColor = MaterialTheme.colorScheme.primary) else MenuDefaults.itemColors()
+                    )
+                }
+            }
+            Icon(
+                painter = painterResource(R.drawable.ic_document_filter),
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    expanded = true
+                },
+            )
         }
     }
 }

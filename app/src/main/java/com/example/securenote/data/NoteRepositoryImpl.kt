@@ -1,9 +1,9 @@
 package com.example.securenote.data
 
-import com.example.securenote.data.local.NoteBlockDataSource
-import com.example.securenote.data.local.NoteDataSource
-import com.example.securenote.data.translator.toEntity
-import com.example.securenote.data.translator.toModel
+import com.example.securenote.data.local.datasource.NoteBlockDataSource
+import com.example.securenote.data.local.datasource.NoteDataSource
+import com.example.securenote.data.local.translator.toEntity
+import com.example.securenote.data.local.translator.toModel
 import com.example.securenote.domain.model.Note
 import com.example.securenote.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow

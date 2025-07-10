@@ -2,7 +2,7 @@ package com.example.securenote.domain.usecase
 
 import com.example.securenote.domain.enum.BlockType
 import com.example.securenote.domain.enum.DateRange
-import com.example.securenote.domain.model.ChartDataPoint
+import com.example.securenote.domain.model.LineChartDataPoint
 import com.example.securenote.domain.repository.NoteBlockRepository
 import com.example.securenote.util.DateFormatType
 import com.example.securenote.util.convertDateToLong
@@ -15,8 +15,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class GetBlocksByTimeUseCase @Inject constructor(private val noteBlockRepository: NoteBlockRepository) :
-    BaseUseCase<GetBlocksByTimeUseCaseParams, Flow<List<ChartDataPoint>>>() {
-    override suspend fun invoke(params: GetBlocksByTimeUseCaseParams): Flow<List<ChartDataPoint>> {
+    BaseUseCase<GetBlocksByTimeUseCaseParams, Flow<List<LineChartDataPoint>>>() {
+    override suspend fun invoke(params: GetBlocksByTimeUseCaseParams): Flow<List<LineChartDataPoint>> {
         val (startTime, endTime) = getTimeRange(params.timeRange)
 
         return noteBlockRepository.getBlocksByTime(startTime, endTime).map { blockList ->
@@ -44,7 +44,7 @@ class GetBlocksByTimeUseCase @Inject constructor(private val noteBlockRepository
                 val value = grouped[date] ?: 0
                 val label =
                     date.format(DateTimeFormatter.ofPattern(if (params.timeRange == DateRange.LAST_1_YEAR) DateFormatType.YEAR_MONTH_DAY else DateFormatType.MONTH_DAY))
-                ChartDataPoint(date, label, value)
+                LineChartDataPoint(date, label, value)
             }
         }
     }

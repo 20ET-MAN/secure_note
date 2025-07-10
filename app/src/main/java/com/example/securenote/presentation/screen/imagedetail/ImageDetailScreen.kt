@@ -132,7 +132,7 @@ fun ImageDetailScreen(onBackPress: () -> Boolean) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_arrow_left),
+                    painter = painterResource(R.drawable.ic_line_arrow_left),
                     null,
                     modifier = Modifier.clickable {
                         scope.launch {
@@ -160,7 +160,7 @@ fun ImageDetailScreen(onBackPress: () -> Boolean) {
                     )
                 }
                 Icon(
-                    painter = painterResource(R.drawable.ic_arrow_right),
+                    painter = painterResource(R.drawable.ic_line_arrow_right),
                     null,
                     modifier = Modifier.clickable {
                         scope.launch {

@@ -1,4 +1,4 @@
-package com.example.securenote.data.local
+package com.example.securenote.data.local.datasource
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow

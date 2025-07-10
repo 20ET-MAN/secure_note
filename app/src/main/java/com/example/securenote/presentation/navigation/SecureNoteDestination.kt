@@ -19,4 +19,6 @@ sealed class SecureNoteDestination(val route: String) {
             return "image_detail?imagePaths=$json&index=$index"
         }
     }
+    object News : SecureNoteDestination("news")
+
 }

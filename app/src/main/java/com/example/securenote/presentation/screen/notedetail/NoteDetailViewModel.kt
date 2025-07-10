@@ -63,8 +63,6 @@ class NoteDetailViewModel @Inject constructor(
                 _noteDetailUiState.update {
                     it.copy(noteBlock = blocks)
                 }
-                Timber.d("Namnt: noteBlock = ${_noteDetailUiState.value.noteBlock}")
-                Timber.d("Namnt: note = ${_noteDetailUiState.value.note}")
             }
 
         }
@@ -145,7 +143,6 @@ class NoteDetailViewModel @Inject constructor(
             observeBlocksJob = null
             observeNoteJob?.cancel()
             observeNoteJob = null
-            Timber.d("Namnt: NoteId = ${_noteDetailUiState.value.note.id} note = ${_noteDetailUiState.value.note}")
             noteRepository.deleteNote(_noteDetailUiState.value.note.id)
         }
     }

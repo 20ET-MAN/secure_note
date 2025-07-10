@@ -12,6 +12,8 @@ import com.example.securenote.presentation.screen.auth.LoginScreen
 import com.example.securenote.presentation.screen.firstlaunch.FirstLaunchScreen
 import com.example.securenote.presentation.screen.home.HomeScreen
 import com.example.securenote.presentation.screen.imagedetail.ImageDetailScreen
+import com.example.securenote.presentation.screen.license.LicenseScreen
+import com.example.securenote.presentation.screen.news.NewsScreen
 import com.example.securenote.presentation.screen.notedetail.NoteDetailScreen
 import com.example.securenote.presentation.screen.setting.SettingScreen
 
@@ -62,6 +64,8 @@ fun SecureAppNavHost(
                 navHostController.navigate(SecureNoteDestination.License.route)
             }, onBackPress = {
                 navHostController.popBackStack()
+            }, onGoToNews = {
+                navHostController.navigate(SecureNoteDestination.News.route)
             })
         }
 
@@ -107,6 +111,18 @@ fun SecureAppNavHost(
                     navHostController.popBackStack()
                 },
             )
+        }
+
+        composable(route = SecureNoteDestination.License.route) {
+            LicenseScreen {
+                navHostController.popBackStack()
+            }
+        }
+
+        composable(route = SecureNoteDestination.News.route) {
+            NewsScreen {
+                navHostController.popBackStack()
+            }
         }
     }
 }
