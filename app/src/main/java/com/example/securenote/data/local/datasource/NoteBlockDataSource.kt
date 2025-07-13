@@ -14,5 +14,5 @@ interface NoteBlockDataSource {
 
     suspend fun getBlocksPrevByNoteId(noteId: Long): List<NoteBlockEntity>
 
-    fun getBlocksByTime(startTime: Long, endTime: Long): Flow<List<NoteBlockEntity>>
+    fun getAllBlock(): Flow<List<NoteBlockEntity>>
 }

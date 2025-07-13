@@ -2,7 +2,6 @@ package com.example.securenote.presentation.screen.imagedetail
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,9 +39,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.example.securenote.R
 import com.example.securenote.presentation.base.BasePage
 import com.example.securenote.presentation.screen.components.AppAppBar
@@ -76,9 +76,11 @@ fun ImageDetailScreen(onBackPress: () -> Boolean) {
     BasePage(viewModel) {
         Box {
             Column {
-                AppAppBar(title = "Image Detail", onNavigationBtnClick = {
-                    onBackPress()
-                })
+                AppAppBar(
+                    title = stringResource(R.string.image_detail_title),
+                    onNavigationBtnClick = {
+                        onBackPress()
+                    })
                 HorizontalPager(
                     state = pagerState,
                     userScrollEnabled = false,
@@ -106,13 +108,13 @@ fun ImageDetailScreen(onBackPress: () -> Boolean) {
                                 translationY = offset.y
                             )
                     ) {
-                        Image(
+                        AsyncImage(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .align(Alignment.Center)
                                 .transformable(state = state),
                             contentDescription = null,
-                            painter = rememberAsyncImagePainter(viewModel.imagePaths[currentPage.value])
+                            model = viewModel.imagePaths[currentPage.value]
                         )
                     }
                 }

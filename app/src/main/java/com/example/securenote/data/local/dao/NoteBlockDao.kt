@@ -43,9 +43,8 @@ interface NoteBlockDao {
     @Query(
         """
     SELECT * FROM note_block
-    WHERE createdAt BETWEEN :startTime AND :endTime
     ORDER BY createdAt ASC
     """
     )
-    fun getBlocksByTime(startTime: Long, endTime: Long): Flow<List<NoteBlockEntity?>>
+    fun getAllBlock(): Flow<List<NoteBlockEntity?>>
 }

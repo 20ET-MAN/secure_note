@@ -27,11 +27,9 @@ class NoteBlockRepositoryImpl @Inject constructor(private val noteBlockDataSourc
         noteBlockDataSource.deleteBlock(block = block.toEntity())
     }
 
-    override fun getBlocksByTime(
-        startTime: Long,
-        endTime: Long,
+    override fun getAllBlock(
     ): Flow<List<NoteBlock>> {
-        return noteBlockDataSource.getBlocksByTime(startTime = startTime, endTime = endTime)
+        return noteBlockDataSource.getAllBlock()
             .map { it.map { it.toModel() } }
     }
 

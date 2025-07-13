@@ -16,13 +16,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.securenote.presentation.screen.components.InitialError
 import com.example.securenote.presentation.dialog.CommonErrorDialog
+import com.example.securenote.presentation.screen.components.InitialError
 
 @Composable
 fun <VM : BaseViewModel> BasePage(
     viewModel: VM,
-    content: @Composable (VM) -> Unit
+    content: @Composable (VM) -> Unit,
 ) {
     val pageStatus by viewModel.pageStatus.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -51,6 +51,7 @@ fun <VM : BaseViewModel> BasePage(
             when (pageStatus) {
                 PageStatus.INITIAL_ERROR -> {
                     InitialError(
+                        message = error,
                         onRetryClick = { viewModel.retry() }
                     )
                 }

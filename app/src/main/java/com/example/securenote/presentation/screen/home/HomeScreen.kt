@@ -44,8 +44,11 @@ fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (id: Long) -> Unit) 
     var homeUIState = viewModel.homeUiState.collectAsState()
 
     var tabs = mutableListOf(
-        TabItem("Notes", painterResource(R.drawable.ic_note)),
-        TabItem("Analytics", painterResource(R.drawable.ic_chart))
+        TabItem(stringResource(R.string.home_tabs_note_tit), painterResource(R.drawable.ic_note)),
+        TabItem(
+            stringResource(R.string.home_tabs_analytics_tit),
+            painterResource(R.drawable.ic_chart)
+        )
     )
 
     val pagerState = rememberPagerState(pageCount = {

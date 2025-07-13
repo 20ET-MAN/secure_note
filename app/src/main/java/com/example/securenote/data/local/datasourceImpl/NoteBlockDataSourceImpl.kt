@@ -29,8 +29,8 @@ class NoteBlockDataSourceImpl @Inject constructor(private val noteBlockDao: Note
         return noteBlockDao.getBlocksPrevByNoteId(noteId = noteId).filterNotNull()
     }
 
-    override fun getBlocksByTime(startTime: Long, endTime: Long): Flow<List<NoteBlockEntity>> {
-        return noteBlockDao.getBlocksByTime(startTime = startTime, endTime = endTime).map { it.filterNotNull() }
+    override fun getAllBlock(): Flow<List<NoteBlockEntity>> {
+        return noteBlockDao.getAllBlock().map { it.filterNotNull() }
     }
 
 }

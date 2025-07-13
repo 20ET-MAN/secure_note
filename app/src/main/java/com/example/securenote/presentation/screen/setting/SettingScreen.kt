@@ -51,7 +51,7 @@ fun SettingScreen(onGoToLicense: () -> Unit, onBackPress: () -> Unit, onGoToNews
                     }
                 }
             }
-            SettingItem(label = "License", onItemClick = onGoToNews)
+            SettingItem(label = "License", onItemClick = onGoToLicense)
             SettingItem(label = "News", onItemClick = onGoToNews)
 
         }

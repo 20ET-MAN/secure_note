@@ -17,10 +17,17 @@ import java.util.Calendar
 class GetBlocksByTimeUseCase @Inject constructor(private val noteBlockRepository: NoteBlockRepository) :
     BaseUseCase<GetBlocksByTimeUseCaseParams, Flow<List<LineChartDataPoint>>>() {
     override suspend fun invoke(params: GetBlocksByTimeUseCaseParams): Flow<List<LineChartDataPoint>> {
-        val (startTime, endTime) = getTimeRange(params.timeRange)
 
-        return noteBlockRepository.getBlocksByTime(startTime, endTime).map { blockList ->
-            val grouped = blockList.groupBy { block ->
+
+        return noteBlockRepository.getAllBlock().map { blockList ->
+            val (startTime, endTime) = getTimeRange(params.timeRange)
+
+            val filteredBlocks = blockList.filter { block ->
+                val createdAt = block.createdAt.convertDateToLong()
+                createdAt in startTime..endTime
+            }
+
+            val grouped = filteredBlocks.groupBy { block ->
                 val date = Instant.ofEpochMilli(block.createdAt.convertDateToLong())
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()

@@ -26,7 +26,8 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://example.com\"")
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -102,5 +103,6 @@ dependencies {
     implementation(libs.accompanist.flowlayout)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
 }

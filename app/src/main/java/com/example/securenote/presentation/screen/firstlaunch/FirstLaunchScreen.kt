@@ -31,12 +31,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.securenote.R
 import com.example.securenote.presentation.base.BasePage
 import kotlinx.coroutines.launch
 
@@ -48,9 +50,10 @@ fun FirstLaunchScreen(onGoToLogin: () -> Unit) {
     val scope = rememberCoroutineScope()
     var isDeviceSecure = remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
-    val text = if (isDeviceSecure.value) "Thiết bị của bạn đã sẵn sàng với xác thực bảo mật."
-    else "Vui lòng thiết lập sinh trắc học hoặc mã PIN để sử dụng ứng dụng."
-    val buttonText = if (isDeviceSecure.value) "Tiếp tục" else "Cài đặt bảo mật"
+    val text = if (isDeviceSecure.value) stringResource(R.string.first_launch_secure_done_msg)
+    else stringResource(R.string.first_launch_setup_biometrics_or_pin)
+    val buttonText =
+        if (isDeviceSecure.value) stringResource(R.string.next) else stringResource(R.string.first_launch_security_configuration)
     val icon = if (isDeviceSecure.value) Icons.Default.Check else Icons.Default.Warning
     val enrollLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -85,10 +88,10 @@ fun FirstLaunchScreen(onGoToLogin: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "SECURE APP",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontSize = 64.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onPrimary
                 ),
             )
             Spacer(modifier = Modifier.height(98.dp))

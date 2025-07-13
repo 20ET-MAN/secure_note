@@ -6,7 +6,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.animation.core.animateOffsetAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -57,13 +56,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.example.securenote.R
 import com.example.securenote.domain.enum.BlockType
 import com.example.securenote.domain.enum.NoteType
@@ -211,7 +211,9 @@ fun NoteDetailScreen(
                                     )
                                 }, verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        if (noteDetailUiState.note.type == NoteType.OTHER) "Select Tag" else noteDetailUiState.note.type.typeName,
+                                        if (noteDetailUiState.note.type == NoteType.OTHER) stringResource(
+                                            R.string.note_detail_select_tag
+                                        ) else noteDetailUiState.note.type.typeName,
                                         style = MaterialTheme.typography.bodyLarge.copy(
                                             color = noteDetailUiState.note.type.color,
                                             fontWeight = FontWeight.Bold
@@ -289,7 +291,9 @@ fun NoteDetailScreen(
                                                     isFirstShowKeyBoard = false
                                                     viewmodel.updateBlock(block.copy(content = value))
                                                 },
-                                                hint = if (noteDetailUiState.noteBlock.size == 1) "Thêm note đi mà <3 !!!" else "...",
+                                                hint = if (noteDetailUiState.noteBlock.size == 1) stringResource(
+                                                    R.string.note_detail_note_detail_hint
+                                                ) else "...",
                                                 modifier = if (index == noteDetailUiState.noteBlock.lastIndex) Modifier.focusRequester(
                                                     focusRequester
                                                 ) else Modifier
@@ -354,8 +358,8 @@ fun NoteDetailScreen(
                         show = true,
                         errorMessage = it,
                         showNegativeButton = true,
-                        negativeButtonText = "Cancel",
-                        positiveButtonText = "Back",
+                        negativeButtonText = stringResource(R.string.cancel),
+                        positiveButtonText = stringResource(R.string.back),
                         negativeButtonClick = {
                             viewmodel.clearNoteErrorMessage()
                         }) {
@@ -381,8 +385,8 @@ fun ImageBlockItem(content: String, onImageClick: (List<String>, Int) -> Unit) {
         val imagePaths = content.split(",")
         imagePaths.forEachIndexed { index, item ->
             val imagePath = "file://$item"
-            Image(
-                painter = rememberAsyncImagePainter(imagePath),
+            AsyncImage(
+                model = imagePath,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {

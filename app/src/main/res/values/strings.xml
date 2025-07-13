@@ -3,13 +3,19 @@
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
     <string name="close">Close</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
     <string name="something_wrong">Something wrong !!!</string>
+    <string name="not_found">Content not found!!!</string>
     <string name="biometric_authentication_error">Authentication failed \n ErrorMessage: %s \n ErrorCode: %s</string>
     <string name="biometric_hardware_unavailable">Hardware unavailable</string>
     <string name="biometric_feature_unavailable">Feature unavailable</string>
     <string name="authentication_failed">Authentication failed</string>
     <string name="biometric_prompt_title">Security authentication</string>
     <string name="biometric_prompt_desc">Please authenticate to use the application.</string>
+    <string name="first_launch_secure_done_msg">Your device is ready and secured with authentication.</string>
+    <string name="first_launch_setup_biometrics_or_pin">Please set up biometric authentication or a PIN code to use the application.</string>
+    <string name="first_launch_security_configuration">Security Configuration</string>
     <string name="login_sc_title">Welcome Back</string>
     <string name="login_sc_authentication_btn">Authentication</string>
     <string name="login_sc_biometric_error_title">Notification</string>
@@ -17,5 +23,11 @@
     <string name="login_sc_biometric_error_btn">Go to secure setting</string>
     <string name="home_quantity_analysis_title">Quantity Analysis</string>
     <string name="home_tags_overview_title">Tags Overview</string>
+    <string name="home_tabs_note_tit">Notes</string>
+    <string name="home_tabs_analytics_tit">Analytics</string>
+    <string name="note_detail_select_tag">Select Tag</string>
+    <string name="note_detail_note_detail_hint">Add a note, please! &lt;3</string>
+    <string name="image_detail_title">Image Detail</string>
+    <string name="licence_title">License</string>
 
 </resources>

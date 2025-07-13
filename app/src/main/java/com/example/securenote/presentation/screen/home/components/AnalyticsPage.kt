@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -248,7 +247,7 @@ fun LineChart(data: List<LineChartDataPoint>) {
                     painter = painterResource(R.drawable.ic_chart_holder),
                     contentDescription = null, modifier = Modifier.size(48.dp)
                 )
-                Text("Content not found!!!")
+                Text(stringResource(R.string.not_found))
             }
         },
     )
@@ -275,15 +274,13 @@ fun AnimatedPieChart(
             anim.animateTo(
                 targetValue = sweepPercentages[index] * 360f,
                 animationSpec = tween(
-                    durationMillis = 1200,
+                    durationMillis = 300,
                     easing = FastOutSlowInEasing
                 )
             )
         }
         showLabels = true
     }
-
-    var selectedIndex by remember { mutableIntStateOf(-1) }
 
     Canvas(
         modifier = modifier
@@ -297,7 +294,7 @@ fun AnimatedPieChart(
         for (i in data.indices) {
             val sweep = animatedSweepAngles[i].value
             drawArc(
-                color = if (i == selectedIndex) colors[i].copy(alpha = 0.7f) else colors[i],
+                color = colors[i],
                 startAngle = startAngle,
                 sweepAngle = sweep,
                 useCenter = true
@@ -322,16 +319,6 @@ fun AnimatedPieChart(
 
             startAngle += sweep
         }
-    }
-
-    if (selectedIndex >= 0) {
-        Text(
-            text = "Selected: ${(data[selectedIndex] / total * 100).roundToInt()}%",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(top = 16.dp)
-        )
     }
 }
 
