@@ -38,8 +38,11 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(onGoToSetting: () -> Unit, onGoToNoteDetail: (id: Long) -> Unit) {
-    val viewModel: HomeViewModel = hiltViewModel()
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+    onGoToSetting: () -> Unit,
+    onGoToNoteDetail: (id: Long) -> Unit,
+) {
 
     var homeUIState = viewModel.homeUiState.collectAsState()
 

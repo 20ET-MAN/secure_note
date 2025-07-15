@@ -77,11 +77,11 @@ import kotlin.math.roundToInt
 
 @Composable
 fun NoteDetailScreen(
+    viewmodel: NoteDetailViewModel = hiltViewModel(),
     onBackPress: () -> Boolean,
     onNavigateToImageDetail: (List<String>, Int) -> Unit,
 ) {
     val context = LocalContext.current
-    val viewmodel: NoteDetailViewModel = hiltViewModel()
     val noteDetailUiState = viewmodel.noteDetailUiState.collectAsState().value
 
     val focusManager = LocalFocusManager.current

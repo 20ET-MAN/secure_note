@@ -46,9 +46,9 @@ import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
 ) {
-    val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
     val activity = context as AppCompatActivity
 

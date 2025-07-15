@@ -31,9 +31,14 @@ import com.example.securenote.presentation.screen.components.AppAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(onGoToLicense: () -> Unit, onBackPress: () -> Unit, onGoToNews: () -> Unit) {
-    val viewModel: SettingViewModel = hiltViewModel()
+fun SettingScreen(
+    viewModel: SettingViewModel = hiltViewModel(),
+    onGoToLicense: () -> Unit,
+    onBackPress: () -> Unit,
+    onGoToNews: () -> Unit,
+) {
     val isDarkMode = viewModel.isDarkMode.collectAsState()
+
     BasePage(viewModel) {
         Column(
             modifier = Modifier

@@ -11,11 +11,12 @@ import com.example.securenote.presentation.base.BasePage
 import com.example.securenote.presentation.screen.components.AppAppBar
 
 @Composable
-fun LicenseScreen( onBackPress: () -> Boolean) {
-    val viewmodel: LicenseViewMode = hiltViewModel()
+fun LicenseScreen(viewmodel: LicenseViewMode = hiltViewModel(), onBackPress: () -> Boolean) {
     BasePage(viewmodel) {
         Column(Modifier.fillMaxWidth()) {
-            AppAppBar(stringResource(R.string.licence_title), onNavigationBtnClick = { onBackPress() })
+            AppAppBar(
+                stringResource(R.string.licence_title),
+                onNavigationBtnClick = { onBackPress() })
         }
     }
 

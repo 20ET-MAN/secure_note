@@ -36,6 +36,10 @@ class HomeViewModel @Inject constructor(
             }
         }
         loadLineChartData()
+        loadPieChartData()
+    }
+
+    private fun loadPieChartData() {
         launchSilent {
             getTagPercentagesUseCase.invoke(BaseUseCase.NoParams()).collect { pieList ->
                 _homeUiState.update { it.copy(pieChartData = pieList) }
@@ -49,12 +53,11 @@ class HomeViewModel @Inject constructor(
                 GetBlocksByTimeUseCaseParams(
                     dateRange
                 )
-            )
-                .collect { analyticValue ->
-                    _homeUiState.update {
-                        it.copy(analyticLineChartData = analyticValue, currentDateRange = dateRange)
-                    }
+            ).collect { analyticValue ->
+                _homeUiState.update {
+                    it.copy(analyticLineChartData = analyticValue, currentDateRange = dateRange)
                 }
+            }
         }
     }
 

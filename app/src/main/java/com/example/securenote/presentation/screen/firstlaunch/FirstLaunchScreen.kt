@@ -43,9 +43,11 @@ import com.example.securenote.presentation.base.BasePage
 import kotlinx.coroutines.launch
 
 @Composable
-fun FirstLaunchScreen(onGoToLogin: () -> Unit) {
+fun FirstLaunchScreen(
+    viewModel: FirstLaunchViewModel = hiltViewModel(),
+    onGoToLogin: () -> Unit,
+) {
 
-    val viewModel: FirstLaunchViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isDeviceSecure = remember { mutableStateOf(false) }

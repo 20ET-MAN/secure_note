@@ -17,8 +17,6 @@ import java.util.Calendar
 class GetBlocksByTimeUseCase @Inject constructor(private val noteBlockRepository: NoteBlockRepository) :
     BaseUseCase<GetBlocksByTimeUseCaseParams, Flow<List<LineChartDataPoint>>>() {
     override suspend fun invoke(params: GetBlocksByTimeUseCaseParams): Flow<List<LineChartDataPoint>> {
-
-
         return noteBlockRepository.getAllBlock().map { blockList ->
             val (startTime, endTime) = getTimeRange(params.timeRange)
 
@@ -56,7 +54,7 @@ class GetBlocksByTimeUseCase @Inject constructor(private val noteBlockRepository
         }
     }
 
-    fun getTimeRange(dateRange: DateRange): Pair<Long, Long> {
+    private fun getTimeRange(dateRange: DateRange): Pair<Long, Long> {
         val endTime = System.currentTimeMillis()
 
         val calStart = Calendar.getInstance()

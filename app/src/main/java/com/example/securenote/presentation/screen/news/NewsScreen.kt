@@ -27,8 +27,7 @@ import com.example.securenote.presentation.base.BasePage
 import com.example.securenote.presentation.screen.components.AppAppBar
 
 @Composable
-fun NewsScreen(onBackPress: () -> Boolean) {
-    val viewModel: NewsViewModel = hiltViewModel()
+fun NewsScreen(viewModel: NewsViewModel = hiltViewModel(), onBackPress: () -> Boolean) {
     val uiState = viewModel.news.collectAsState()
     BasePage(viewModel) {
         Column(Modifier.fillMaxWidth()) {
